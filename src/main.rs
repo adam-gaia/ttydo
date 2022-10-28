@@ -291,6 +291,10 @@ async fn main() -> Result<()> {
 
     let app = App::from_config(&config)?;
     let command = args.command;
-    app.run_command(&command).await?; 
+    if command.is_empty() {
+        bail!("Please specify a command to run following '--'");
+    }
+    app.run_command(&command).await?;
+
     Ok(())
 }
