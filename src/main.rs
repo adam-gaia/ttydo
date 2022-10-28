@@ -163,18 +163,17 @@ impl App {
             // Stream output to terminal as it runs
             while let Some((source, line)) = map.next().await {
                 let line = line?;
-                let indent = match source {
+                match source {
                     "stdout" => {
-                        &self.stdout_ind
+                        println!("{}{}", self.stdout_ind, line);
                     },
                     "stderr" => {
-                        &self.stderr_ind
+                        eprintln!("{}{}", self.stderr_ind, line);
                     },
                     _ => {
                         unreachable!("Stream must be stdout or stder");
                     }
-                };
-                println!("{}{}", indent, line);
+                }
             }
 
             let child_status = handle.await??;
