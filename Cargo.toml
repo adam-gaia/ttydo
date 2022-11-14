@@ -1,6 +1,6 @@
 [package]
 name = "ind"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "Run a process and indent its stdout and stderr"
 license-file = "LICENSE"
@@ -14,10 +14,15 @@ async-stream = "0.3.3"
 clap = { version = "4.0.15", features = ["derive", "cargo"] }
 directories-next = "2.0.0"
 env_logger = "0.9.1"
+futures = "0.3.25"
 futures-core = "0.3.25"
+futures-util = "0.3.25"
+libc = "0.2.137"
 log = "0.4.17"
+nix = "0.25.0"
 serde = { version = "1.0.147", features = ["serde_derive"] }
-tokio = { version = "1.21.2", features = ["process", "macros", "full"] }
+tokio = { version = "1.21.2", features = ["full"] }
+tokio-fd = "0.3.0"
 tokio-stream = { version = "0.1.11", features = ["io-util"] }
 toml = "0.5.9"
 which = "4.3.0"

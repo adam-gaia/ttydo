@@ -6,20 +6,36 @@
     crane.url = "github:ipetkov/crane";
     crane.inputs.nixpkgs.follows = "nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-urils.follows = "flake-utils";
+      };
+    };
     advisory-db = {
       url = "github:rustsec/advisory-db";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, crane, flake-utils, advisory-db, ... }:
+  outputs = { self, nixpkgs, crane, flake-utils, rust-overlay, advisory-db, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
+          overlays = [ (import rust-overlay) ];
         };
-        inherit (pkgs) lib;
-        craneLib = crane.lib.${system};
+
+        nightlyRust = pkgs.rust-bin.nightly.latest.default;
+
+        # From crane examples:
+        # We don't need to overlay our custom toolchain for the *entire*
+        # pkgs (which would require rebuidling anything else which uses rust).
+        # Instead, we just want to update the scope that crane will use by appending
+        # our specific toolchain there.
+        craneLib = (crane.mkLib pkgs).overrideToolchain nightlyRust;
+
         buildInputs = with pkgs; [
           # Programs and libraries used by the derivation at *run-time*
         ];
@@ -27,20 +43,21 @@
           # Programs and libraries used at *build-time*
         ];
         toolchain = with pkgs; [
-          cargo
-          rustc
-          rustfmt
+          nightlyRust
+          #cargo
+          #rustc
+          #rustfmt
           clippy
           rust-analyzer
           cargo-nextest
           cargo-limit
           cargo-audit
-          nixpkgs-fmt 
+          nixpkgs-fmt
         ] ++ nativeBuildInputs ++ buildInputs;
 
         # Common derivation arguments used for all builds
         commonArgs = {
-          src = ./.;
+          src = craneLib.cleanCargoSource ./.;
           buildInputs = buildInputs;
           nativeBuildInputs = nativeBuildInputs;
         };
@@ -97,7 +114,7 @@
           partitions = 1;
           partitionType = "count";
         });
- 
+
       in
       {
         packages = {
@@ -112,16 +129,16 @@
 
         checks = {
           inherit
-           # Build the crate as part of `nix flake check` for convenience
-           myCrate
-           myCrateFormat
-           myCrateClippy
-           #myCrateAudit
-           myCrateDoc;
-        #} // lib.optionalAttrs (system == "x86_64-linux") {
-        #    myCrateCoverage = craneLib.cargoTarpaulin {
-        #      inherit cargoArtifacts;
-        #    };
+            # Build the crate as part of `nix flake check` for convenience
+            myCrate
+            myCrateFormat
+            myCrateClippy
+            #myCrateAudit
+            myCrateDoc;
+          #} // lib.optionalAttrs (system == "x86_64-linux") {
+          #    myCrateCoverage = craneLib.cargoTarpaulin {
+          #      inherit cargoArtifacts;
+          #    };
         };
 
         apps.default = flake-utils.lib.mkApp {
