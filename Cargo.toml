@@ -1,6 +1,6 @@
 [package]
 name = "ttydo"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Adam Gaia"]
 description = "Run a process with a pseudo-terminal. Useful for running screen-based programs in scripts"
@@ -17,7 +17,7 @@ path = "crates/ttydo/main.rs"
 name = "ttydo"
 
 [dependencies]
-commandstream = { version = "0.1.0", path = "crates/commandstream"}
+commandstream = { version = "0.2.0", path = "crates/commandstream"}
 anyhow = "1.0.65"
 clap = { version = "4.0.15", features = ["derive", "cargo"] }
 env_logger = "0.9.1"
