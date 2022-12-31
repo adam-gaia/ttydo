@@ -37,3 +37,28 @@ pub trait CommandStream<'a> {
         Ok(0)
     }
 }
+
+pub struct SimpleCommand<'a> {
+    command: &'a [String],
+}
+impl<'a> SimpleCommand<'a> {
+    pub fn new(command: &'a [String]) -> Result<Self> {
+        Ok(SimpleCommand { command })
+    }
+}
+
+impl<'a> CommandStream<'_> for SimpleCommand<'a> {
+    fn command(&self) -> &[String] {
+        &self.command
+    }
+
+    fn handle_stdout(&self, line: &str) -> Result<()> {
+        println!("{}", line);
+        Ok(())
+    }
+
+    fn handle_stderr(&self, line: &str) -> Result<()> {
+        eprintln!("{}", line);
+        Ok(())
+    }
+}
