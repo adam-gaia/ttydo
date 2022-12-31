@@ -55,6 +55,8 @@ pub enum XStatus {
     Signaled(Signal),
 }
 
+// TODO: instead of types like 'XChildHandle' and 'XStatus' it would be nice to return Tokio's
+// 'ChildHandle' and 'Status' for api compat with tokio::command and std::command
 pub struct XChildHandle {
     pid: Pid,
     stdout_raw_fd: RawFd,
@@ -161,19 +163,19 @@ impl XChildHandle {
     }
 }
 
-pub struct XCommand<'a> {
+pub struct TTYCommand<'a> {
     command: &'a str,
     args: &'a [String],
     env: Vec<String>,
 }
-impl<'a> XCommand<'a> {
+impl<'a> TTYCommand<'a> {
     pub fn new(command: &'a str, args: &'a [String]) -> Self {
         // Format env vars in a list of "key=value"
         let env: Vec<String> = env::vars()
             .into_iter()
             .map(|x| format!("{}={}", x.0, x.1))
             .collect();
-        XCommand { command, args, env }
+        TTYCommand { command, args, env }
     }
 
     /// Replace the current process with the executed command

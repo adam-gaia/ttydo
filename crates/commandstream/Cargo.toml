@@ -1,0 +1,16 @@
+[package]
+name = "commandstream"
+version = "0.1.0"
+edition = "2021"
+authors = ["Adam Gaia"]
+description = "Stream the stdout and stderr of a command"
+readme = "README.md"
+license = "MIT"
+
+[dependencies]
+ttycommand = {version = "0.1.0", path = "../ttycommand"}
+anyhow = "1.0.65"
+async-trait = "0.1.60"
+futures-util = "0.3.25"
+log = "0.4.17"
+tokio-stream = { version = "0.1.11", features = ["io-util"] }
