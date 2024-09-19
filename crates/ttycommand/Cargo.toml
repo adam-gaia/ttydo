@@ -21,4 +21,4 @@ tokio = { version = "1.21.2", features = ["full"] }
 tokio-fd = "0.3.0"
 tokio-stream = { version = "0.1.11", features = ["io-util"] }
 toml = "0.5.9"
-which = "4.3.0"
+which = "6.0.0"
