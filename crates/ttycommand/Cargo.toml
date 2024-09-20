@@ -15,7 +15,7 @@ futures-core = "0.3.25"
 futures-util = "0.3.25"
 libc = "0.2.137"
 log = "0.4.17"
-nix = "0.25.0"
+nix = "0.29.0"
 serde = { version = "1.0.147", features = ["serde_derive"] }
 tokio = { version = "1.21.2", features = ["full"] }
 tokio-fd = "0.3.0"
