@@ -1,6 +1,6 @@
 #![feature(async_iterator)]
-use anyhow::{bail, Result};
 use clap::Parser;
+use color_eyre::{bail, Result};
 use log::debug;
 
 use commandstream::{CommandStream, SimpleCommand};

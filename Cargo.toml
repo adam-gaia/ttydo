@@ -18,11 +18,11 @@ name = "ttydo"
 
 [dependencies]
 commandstream = { version = "0.2.0", path = "crates/commandstream"}
-anyhow = "1.0.65"
 clap = { version = "4.0.15", features = ["derive", "cargo"] }
 env_logger = "0.11.0"
 log = "0.4.17"
 tokio = { version = "1.21.2", features = ["full"] }
+color-eyre = "0.6.3"
 
 [workspace]
 members = [

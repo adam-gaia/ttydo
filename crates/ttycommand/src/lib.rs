@@ -1,5 +1,5 @@
-use anyhow::{bail, Result};
 use async_stream::stream;
+use color_eyre::{bail, Result};
 use log::debug;
 use nix::pty::openpty;
 use nix::sys::signal::Signal;
