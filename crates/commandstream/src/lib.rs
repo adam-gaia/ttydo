@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use color_eyre::{bail, Result};
+use color_eyre::{eyre::bail, Result};
 use futures_util::pin_mut;
 use log::debug;
 use tokio_stream::StreamExt;

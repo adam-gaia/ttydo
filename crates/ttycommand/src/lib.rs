@@ -1,5 +1,5 @@
 use async_stream::stream;
-use color_eyre::{bail, Result};
+use color_eyre::{eyre::bail, Result};
 use log::debug;
 use nix::pty::openpty;
 use nix::sys::signal::Signal;
@@ -10,6 +10,7 @@ use nix::unistd::ForkResult;
 use nix::unistd::{close, fork, Pid};
 use std::env;
 use std::ffi::CString;
+use std::os::fd::AsRawFd;
 use std::os::unix::prelude::RawFd;
 use std::path::Path;
 use std::pin::Pin;
@@ -148,7 +149,7 @@ impl XChildHandle {
                                 return;
                             },
                             WaitStatus::Signaled(pid, signal, _) => {
-                                debug!("Child was killed by signal {}", signal);
+                                debug!("Child was killed by signal {:?}", signal);
                                 //return Ok(XStatus::Signaled(signal))
                                 return;
                             },
@@ -226,26 +227,31 @@ impl<'a> TTYCommand<'a> {
         let stderr_read_side = stderr_pty.master;
         let stderr_write_side = stderr_pty.slave;
 
-        let Ok(res) = (unsafe {fork()}) else {
+        let Ok(res) = (unsafe { fork() }) else {
             bail!("fork() failed");
         };
         match res {
             ForkResult::Parent { child } => {
                 // We are the parent
-                close(stdout_write_side).unwrap();
-                close(stderr_write_side).unwrap();
+                close(stdout_write_side.as_raw_fd()).unwrap();
+                close(stderr_write_side.as_raw_fd()).unwrap();
 
                 // Return a handle to the child
-                Ok(XChildHandle::new(child, stdout_read_side, stderr_read_side).unwrap())
+                Ok(XChildHandle::new(
+                    child,
+                    stdout_read_side.as_raw_fd(),
+                    stderr_read_side.as_raw_fd(),
+                )
+                .unwrap())
             }
             ForkResult::Child => {
                 // We are the child
-                close(stdout_read_side).unwrap();
-                close(stderr_read_side).unwrap();
+                close(stdout_read_side.as_raw_fd()).unwrap();
+                close(stderr_read_side.as_raw_fd()).unwrap();
 
                 // Redirect stdout/err to pipe
-                dup2(stdout_write_side, libc::STDOUT_FILENO).unwrap();
-                dup2(stderr_write_side, libc::STDERR_FILENO).unwrap();
+                dup2(stdout_write_side.as_raw_fd(), libc::STDOUT_FILENO).unwrap();
+                dup2(stderr_write_side.as_raw_fd(), libc::STDERR_FILENO).unwrap();
 
                 // TODO: Ignore (or pass through?) stdin
 
