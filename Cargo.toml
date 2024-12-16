@@ -17,7 +17,7 @@ path = "crates/ttydo/main.rs"
 name = "ttydo"
 
 [dependencies]
-commandstream = { version = "0.2.0", path = "crates/commandstream"}
+commandstream = { version = "0.3.0", path = "crates/commandstream"}
 clap = { version = "4.0.15", features = ["derive", "cargo"] }
 env_logger = "0.11.0"
 log = "0.4.17"
